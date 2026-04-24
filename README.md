@@ -1,12 +1,9 @@
-# Tenant & Housing Rights Advocate – Streamlit App
+# Tenant & Housing Rights Advocate App
 
 ## Overview
-This repository contains the **frontend application** for the Tenant & Housing Rights Advocate project.  
-It provides an interactive interface where users can upload lease agreements and ask questions in plain English to better understand their tenancy rights.
+This repository contains the **frontend application** for the Tenant & Housing Rights Advocate project. It provides an interactive interface where users can upload lease agreements and ask questions in plain English to better understand their tenancy rights.
 
 The application connects to a **FastAPI-based Agentic RAG backend**, which retrieves relevant legal information and generates grounded, explainable responses.
-
----
 
 ## Architecture
 
@@ -19,12 +16,11 @@ FastAPI Backend (tenant-advocate-rag repo)
 ↓
 RAG Pipeline (LangChain + ChromaDB + OpenAI)
 ```
----
 
 ## Features
-
-
----
+- Chat-based interface for questions
+- Upload lease agreements (PDF)
+- Session-based conversation memory
 
 ## Repository Structure
 ```bash
@@ -49,8 +45,6 @@ tenant-advocate-app/
 ├── .env.example            # Environment variables template
 └── README.md
 ```
----
-
 ## Setup
 
 ### 1. Clone the repository
@@ -67,7 +61,6 @@ Active environment
 ```bash
 poetry shell
 ```
----
 
 ## Environment Variables
 Create a ```.env``` file:
@@ -78,13 +71,12 @@ USE_MOCK_BACKEND=false
 NOTES
 - ```USE_MOCK_BACKEND=true``` -> use mock responses (no backend)
 - ```USE_MOCK_BACKEND=false``` -> connect to FastAPI backend
----
 
 ## Running App
 ```bash
 poetry run streamlit run app/streamlit_app.py
 ```
----
+
 ## Backend Integration
 The app communicates with the backend using a simple API contract.
 
@@ -96,7 +88,7 @@ The app communicates with the backend using a simple API contract.
 ```
 
 ```
----
+
 ## Deployment
 ### Frontend
 Hosted on Streamlit Community Cloud
