@@ -49,7 +49,7 @@ tenant-advocate-app/
 
 ### 1. Clone the repository
 ```bash
-git clone 
+git clone https://github.com/alibg3/tenant-advocate-app
 cd tenant-advocate-app
 ```
 
