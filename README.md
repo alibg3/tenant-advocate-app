@@ -1,7 +1,11 @@
 # Tenant & Housing Rights Advocate App
 
 ## Overview
-This repository contains the **frontend application** for the Tenant & Housing Rights Advocate project. It provides an interactive interface where users can upload lease agreements and ask questions in plain English to better understand their tenancy rights.
+This repository contains the **frontend application** for the Tenant & Housing Rights Advocate project. It provides an interactive interface where users can:
+
+- Ask general tenancy questions  
+- Upload lease agreements  
+- Generate legal insights and communication drafts  
 
 The application connects to a **FastAPI-based Agentic RAG backend**, which retrieves relevant legal information and generates grounded, explainable responses.
 
@@ -11,32 +15,40 @@ The application connects to a **FastAPI-based Agentic RAG backend**, which retri
 User
 ↓
 Streamlit App (this repo)
-↓ HTTP request
+↓ HTTP request (streaming)
 FastAPI Backend (tenant-advocate-rag repo)
 ↓
 RAG Pipeline (LangChain + ChromaDB + OpenAI)
 ```
 
 ## Features
-- Chat-based interface for questions
+- Chat-based Q&A (general + lease-specific)
+- Lease audit (full document analysis)
+- Communication draft generation (tenant → landlord)
 - Upload lease agreements (PDF)
-- Session-based conversation memory
+- Session-based memory
+- Streaming responses from backend
 
 ## Repository Structure
 ```bash
 tenant-advocate-app/
 │
 ├── app/                    # Streamlit application
-│   ├── streamlit_app.py
-│   ├── ui_components.py
-│   └── session_state.py
+│   ├── streamlit_app.py        # Main app entry point
+│   ├── sidebar.py              # Lease upload + backend health status
+│   ├── chat_tab.py             # Chat Q&A interface
+│   ├── audit_tab.py            # Lease audit interface
+│   ├── draft_tab.py            # Communication draft form
+│   ├──session_state.py         # Central session state setup
+│   └── ui_components.py
 │
 ├── backend_client/         # Interface to FastAPI backend
-│   ├── mock_backend.py
-│   └── api_client.py
+│   ├── mock_backend.py         # For testing
+│   └── api_client.py           # Calls FastAPI streaming endpoints
 │
 ├── utils/                  # Helper functions 
-│   └── pdf_utils.py
+│   ├── pdf_utils.py            # Extract text for /chat
+│   └── response_utils.py       # Streaming display helper
 │
 ├── assets/                 # Static assets (images, styles)
 │
@@ -78,16 +90,19 @@ poetry run streamlit run app/streamlit_app.py
 ```
 
 ## Backend Integration
-The app communicates with the backend using a simple API contract.
+The app communicates with the backend via streaming endpoints.
 
-### Request
-```
+### Main Endpoints
+- ```GET /health``` → backend status
+- ```POST /chat``` → Q&A (JSON input, streaming output)
+- ```POST /audit``` → lease audit (PDF upload, streaming output)
+- ```POST /draft``` → communication draft (form + optional PDF, streaming output)
 
-```
-### Response
-```
+NOTES
+- Responses are streamed token-by-token (Server-Sent Events), rather than returned as a single JSON object.
+- API interactions are handled through the `api_client.py` module.
+- The frontend does not directly perform HTTP requests; all communication is abstracted via the API client.
 
-```
 
 ## Deployment
 ### Frontend
