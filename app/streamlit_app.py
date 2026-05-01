@@ -1,111 +1,54 @@
 import streamlit as st
 
+from session_state import initialise_session_state
+from sidebar import render_sidebar
+from chat_tab import render_chat_tab
+from audit_tab import render_audit_tab
+from draft_tab import render_draft_tab
+
 
 st.set_page_config(
     page_title="Tenant & Housing Rights Advocate",
-    layout="wide"
+    page_icon="🏠",
+    layout="wide",
+)
+
+##-------------hide default Streamlit file uploader instructions to avoid confusion with our custom uploader
+st.markdown(
+    """
+    <style>
+    div[data-testid="stFileUploaderDropzoneInstructions"] > div > span {
+        display: none;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
 )
 
 
+initialise_session_state()
 
-##-----------------Session state setup-------------
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-if "lease_uploaded" not in st.session_state:
-    st.session_state.lease_uploaded = False
-
-if "lease_file_name" not in st.session_state:
-    st.session_state.lease_file_name = None
-
-
-
-###--------------------------Header-------------
 st.title("Tenant & Housing Rights Advocate")
 st.write(
-    "Upload your lease agreement and ask questions about your tenancy rights in plain English."
+    "Ask general tenancy questions, upload a lease for document-specific support, "
+    "run a lease audit or generate a communication draft."
 )
 
 st.info(
-    "This is an early frontend prototype. Responses are currently mock answers until the FastAPI backend is connected. LET'S GOOOO!"
+    "This is an early frontend prototype. Responses are currently mock answers until the FastAPI backend is connected."
 )
 
+render_sidebar()
 
+chat_tab, audit_tab, draft_tab = st.tabs(
+    ["Chat Q&A", "Lease Audit", "Communication Draft"]
+)
 
-##------------------Sidebar lease upload-----------------------------
-with st.sidebar:
-    st.header("Lease Upload")
+with chat_tab:
+    render_chat_tab()
 
-    uploaded_file = st.file_uploader(
-        "Upload your lease agreement",
-        type=["pdf"],
-        help="Upload a PDF lease agreement and start asking questions."
-    )
+with audit_tab:
+    render_audit_tab()
 
-    if uploaded_file is not None:
-        st.session_state.lease_uploaded = True
-        st.session_state.lease_file_name = uploaded_file.name
-
-        st.success("Lease uploaded successfully.")
-        st.write(f"**File:** {uploaded_file.name}")
-
-    else:
-        st.warning("No lease uploaded yet.")
-
-    st.divider()
-
-    if st.button("Clear chat"):
-        st.session_state.messages = []
-        st.rerun()
-
-
-
-###-------------------status---------------------------
-
-if st.session_state.lease_uploaded:
-    st.success(f"Current lease: {st.session_state.lease_file_name}")
-else:
-    st.info("You can ask general tenancy questions now, or upload a lease for document-specific questions.")
-
-
-###-------------------Chat history display---------------------------
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.write(message["content"])
-
-
-###-------------------Chat input---------------------------
-user_question = st.chat_input("Ask a question about your lease or tenancy rights...")
-
-if user_question:
-    st.session_state.messages.append(
-        {"role": "user", "content": user_question}
-    )
-
-    with st.chat_message("user"):
-        st.write(user_question)
-
-if st.session_state.lease_uploaded:
-    assistant_response = (
-        "This is a mock response. In the final version, this question will be sent "
-        "to the FastAPI backend. "
-        "In the meantime, I can tell you a joke: "
-        "How do you make an octopus laugh? "
-        "With ten-tickles!"
-    )
-else:
-    assistant_response = (
-        "This is a mock response. In the final version, this question will be sent "
-        "to the FastAPI backend. "
-        "In the meantime, I can tell you a joke: "
-        "Why did the tenant bring a ladder to the inspection? "
-        "Because the rent was too high."
-
-    )
-
-    st.session_state.messages.append(
-        {"role": "assistant", "content": assistant_response}
-    )
-
-    with st.chat_message("assistant"):
-        st.write(assistant_response)
+with draft_tab:
+    render_draft_tab()
