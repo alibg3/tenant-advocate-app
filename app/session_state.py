@@ -15,6 +15,7 @@ def initialise_session_state():
         "backend_status": None,
         "lease_uploader_key": 0,
         "upload_error": None,
+        "draft_form_key": 0,
     }
 
     for key, value in defaults.items():

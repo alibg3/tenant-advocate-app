@@ -16,7 +16,6 @@ def render_sidebar() -> None:
         st.divider()
 
 
-
 def render_backend_status() -> None:
     """Render backend status placeholder.
 
@@ -48,45 +47,48 @@ def render_lease_upload() -> None:
 
     st.caption("Maximum file size: 10MB. Text-based PDFs only.")
 
-    if uploaded_file is None:
-        st.session_state.lease_bytes = None
-        st.session_state.lease_filename = None
-        st.session_state.lease_text = None
+    # IMPORTANT:
+    # If uploaded_file is None, do not clear the lease.
+    # The lease should only be cleared when the user clicks "Clear uploaded lease".
+    if uploaded_file is not None:
+        try:
+            validate_pdf_file(
+                filename=uploaded_file.name,
+                file_size_bytes=uploaded_file.size,
+            )
 
-        if st.session_state.get("upload_error"):
-            st.error(st.session_state.upload_error)
+            lease_bytes = uploaded_file.read()
+            lease_text = extract_pdf_text_from_bytes(lease_bytes)
 
-        st.info("No lease uploaded. General questions are still available.")
-        return
+            st.session_state.lease_bytes = lease_bytes
+            st.session_state.lease_filename = uploaded_file.name
+            st.session_state.lease_text = lease_text
+            st.session_state.upload_error = None
 
-    try:
-        validate_pdf_file(
-            filename=uploaded_file.name,
-            file_size_bytes=uploaded_file.size,
-        )
+        except ValueError as error:
+            st.session_state.lease_bytes = None
+            st.session_state.lease_filename = None
+            st.session_state.lease_text = None
+            st.session_state.upload_error = str(error)
+            st.session_state.lease_uploader_key += 1
+            st.rerun()
 
-        lease_bytes = uploaded_file.read()
-        lease_text = extract_pdf_text_from_bytes(lease_bytes)
+    if st.session_state.get("upload_error"):
+        st.error(st.session_state.upload_error)
 
-        st.session_state.lease_bytes = lease_bytes
-        st.session_state.lease_filename = uploaded_file.name
-        st.session_state.lease_text = lease_text
-        st.session_state.upload_error = None
-
+    if st.session_state.get("lease_bytes"):
         st.success("Lease uploaded successfully.")
-        st.caption(f"File: {uploaded_file.name}")
+        st.caption(f"File: {st.session_state.get('lease_filename')}")
+    else:
+        st.info("No lease uploaded. General questions are still available.")
 
-    except ValueError as error:
-        st.session_state.lease_bytes = None
-        st.session_state.lease_filename = None
-        st.session_state.lease_text = None
-        st.session_state.upload_error = str(error)
-        st.session_state.lease_uploader_key += 1
-        st.rerun()
-
-    if st.button("Clear uploaded lease"):
-        st.session_state.lease_bytes = None
-        st.session_state.lease_filename = None
-        st.session_state.lease_text = None
-        st.session_state.lease_uploader_key += 1
-        st.rerun()
+    if st.session_state.get("lease_bytes"):
+        if st.button("Clear uploaded lease"):
+            st.session_state.lease_bytes = None
+            st.session_state.lease_filename = None
+            st.session_state.lease_text = None
+            st.session_state.audit_result = ""
+            st.session_state.draft_result = ""
+            st.session_state.upload_error = None
+            st.session_state.lease_uploader_key += 1
+            st.rerun()

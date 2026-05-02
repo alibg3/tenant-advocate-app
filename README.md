@@ -4,8 +4,9 @@
 This repository contains the **frontend application** for the Tenant & Housing Rights Advocate project. It provides an interactive interface where users can:
 
 - Ask general tenancy questions  
-- Upload lease agreements  
-- Generate legal insights and communication drafts  
+- Upload lease agreements (PDF)
+- Run a structured lease audit
+- Generate communication drafts for landlords/agents 
 
 The application connects to a **FastAPI-based Agentic RAG backend**, which retrieves relevant legal information and generates grounded, explainable responses.
 
@@ -22,12 +23,20 @@ RAG Pipeline (LangChain + ChromaDB + OpenAI)
 ```
 
 ## Features
+- Landing page + main app navigation
 - Chat-based Q&A (general + lease-specific)
 - Lease audit (full document analysis)
 - Communication draft generation (tenant → landlord)
 - Upload lease agreements (PDF)
-- Session-based memory
+- Session-based memory (chat history and lease persist within session)
 - Streaming responses from backend
+
+## Lease Handling
+
+- Lease files are stored only in `st.session_state`
+- No persistent storage (no database)
+- Lease is shared across Chat, Audit, and Draft tabs
+- Lease is cleared only when the user clicks "Clear uploaded lease"
 
 ## Repository Structure
 ```bash
@@ -39,16 +48,16 @@ tenant-advocate-app/
 │   ├── chat_tab.py             # Chat Q&A interface
 │   ├── audit_tab.py            # Lease audit interface
 │   ├── draft_tab.py            # Communication draft form
-│   ├──session_state.py         # Central session state setup
-│   └── ui_components.py
+│   ├── session_state.py        # Central session state setup
 │
 ├── backend_client/         # Interface to FastAPI backend
 │   ├── mock_backend.py         # For testing
 │   └── api_client.py           # Calls FastAPI streaming endpoints
 │
 ├── utils/                  # Helper functions 
-│   ├── pdf_utils.py            # Extract text for /chat
-│   └── response_utils.py       # Streaming display helper
+│   ├── pdf_utils.py            # PDF validation + text extraction
+│   ├── response_utils.py       # Streaming rendering helper
+│   └── pdf_export_utils.py     # Audit PDF generation
 │
 ├── assets/                 # Static assets (images, styles)
 │
@@ -82,7 +91,7 @@ USE_MOCK_BACKEND=false
 ```
 NOTES
 - ```USE_MOCK_BACKEND=true``` -> use mock responses (no backend)
-- ```USE_MOCK_BACKEND=false``` -> connect to FastAPI backend
+- ```USE_MOCK_BACKEND=false``` -> connect to FastAPI backend via `api_client.py`
 
 ## Running App
 ```bash
@@ -102,6 +111,10 @@ NOTES
 - Responses are streamed token-by-token (Server-Sent Events), rather than returned as a single JSON object.
 - API interactions are handled through the `api_client.py` module.
 - The frontend does not directly perform HTTP requests; all communication is abstracted via the API client.
+- Lease handling differs per endpoint:
+  - Chat → sends extracted lease text (`lease_text`)
+  - Audit → sends raw PDF bytes
+  - Draft → sends raw PDF bytes (optional)
 
 
 ## Deployment
