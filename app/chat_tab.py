@@ -1,6 +1,7 @@
 import streamlit as st
 
-from backend_client.mock_backend import stream_chat
+##from backend_client.mock_backend import stream_chat ##mock backend
+from backend_client.api_client import stream_chat
 from utils.response_utils import render_stream
 
 
@@ -26,6 +27,7 @@ def render_chat_tab() -> None:
 
     if st.session_state.get("lease_text"):
         st.success("Lease context available for this chat.")
+        ##st.caption(f"Lease text length: {len(st.session_state.get('lease_text') or '')}") ##to validate lease_text length being sent to backend
     else:
         st.info("No lease uploaded. General tenancy questions are still supported.")
 
@@ -110,6 +112,7 @@ def render_chat_tab() -> None:
 
                 stream = stream_chat(
                     question=question,
+                    #lease_text=(st.session_state.get("lease_text") or "")[:12000],
                     lease_text=st.session_state.get("lease_text"),
                     chat_history=format_chat_history(),
                 )

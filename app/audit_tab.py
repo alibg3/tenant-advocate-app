@@ -1,6 +1,8 @@
 import streamlit as st
 
-from backend_client.mock_backend import stream_audit
+##from backend_client.mock_backend import stream_audit  ##mock backend
+from backend_client.api_client import stream_audit
+
 from utils.response_utils import render_stream
 from utils.pdf_export_utils import create_pdf_from_text
 

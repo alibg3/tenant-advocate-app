@@ -1,6 +1,7 @@
 import streamlit as st
 
-from backend_client.mock_backend import stream_draft
+##from backend_client.mock_backend import stream_draft #mock backend
+from backend_client.api_client import stream_draft
 
 
 MAX_SITUATION_LENGTH = 2000

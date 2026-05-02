@@ -1,4 +1,5 @@
 import streamlit as st
+from backend_client.api_client import check_backend_health
 
 from utils.pdf_utils import extract_pdf_text_from_bytes, validate_pdf_file
 
@@ -15,19 +16,38 @@ def render_sidebar() -> None:
         render_lease_upload()
         st.divider()
 
+#### mocked backend version of render_backend_status
+# def render_backend_status() -> None:
+#     """Render backend status placeholder.
+
+#     This will later call the FastAPI /health endpoint.
+#     """
+
+#     st.subheader("Backend Status")
+
+#     if st.session_state.get("backend_status"):
+#         st.success("Backend connected")
+#     else:
+#         st.warning("Mock mode / backend not connected")
+#### finished mocked version
+
+@st.cache_data(ttl=30)
+def get_cached_backend_status():
+    return check_backend_health()
+
 
 def render_backend_status() -> None:
-    """Render backend status placeholder.
-
-    This will later call the FastAPI /health endpoint.
-    """
-
     st.subheader("Backend Status")
 
-    if st.session_state.get("backend_status"):
+    status = get_cached_backend_status()
+    st.session_state.backend_status = status
+
+    if status and status.get("api_configured") and status.get("knowledge_base_ready"):
         st.success("Backend connected")
+    elif status:
+        st.warning("Backend reachable, but not fully ready")
     else:
-        st.warning("Mock mode / backend not connected")
+        st.error("Backend not connected")
 
 
 def render_lease_upload() -> None:
