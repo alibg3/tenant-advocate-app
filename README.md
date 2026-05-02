@@ -24,10 +24,10 @@ RAG Pipeline (LangChain + ChromaDB + OpenAI)
 
 ## Features
 - Landing page + main app navigation
+- Upload lease agreements (PDF)
 - Chat-based Q&A (general + lease-specific)
 - Lease audit (full document analysis)
 - Communication draft generation (tenant → landlord)
-- Upload lease agreements (PDF)
 - Session-based memory (chat history and lease persist within session)
 - Streaming responses from backend
 
