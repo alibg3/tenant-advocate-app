@@ -10,25 +10,27 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 
 ### remove emojis for now :(
 def _clean_markdown_line(line: str) -> str:
-    """Clean Markdown symbols and unsupported emojis before PDF export."""
-
     line = line.strip()
 
     if line.startswith(">"):
         line = line.lstrip(">").strip()
 
+    line = line.replace("⚠️", "Warning:")
+
     replacements = {
-        "⚠️": "Warning:",
-        "🔴": "",
-        "🟠": "",
-        "🟢": "",
-        "🔵": "",
+        "🔴 Illegal": "Illegal",
+        "🟠 Unfair": "Unfair",
+        "🟢 Standard": "Standard",
+        "🔵 Favourable": "Favourable",
+        "🔴": "Illegal",
+        "🟠": "Unfair",
+        "🟢": "Standard",
+        "🔵": "Favourable",
     }
 
     for old, new in replacements.items():
         line = line.replace(old, new)
 
-    # Clean double spaces caused by emoji removal
     line = " ".join(line.split())
 
     return line
