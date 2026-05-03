@@ -6,6 +6,12 @@ from chat_tab import render_chat_tab
 from audit_tab import render_audit_tab
 from draft_tab import render_draft_tab
 
+##image
+from pathlib import Path
+
+# BASE_DIR = Path(__file__).resolve().parent.parent
+# IMAGE_PATH = BASE_DIR / "assets" / "landing_page.png"
+
 
 st.set_page_config(
     page_title="Tenant & Housing Rights Advocate",
@@ -68,33 +74,46 @@ if not st.session_state.show_app:
     title_left, title_centre, title_right = st.columns([0.2, 3, 0.2])
     with title_centre:
         st.title("Tenant & Housing Rights Advocate")
-
-    # Description block
-    desc_left, desc_centre, desc_right = st.columns([1, 2, 1])
-    with desc_centre:
         st.markdown(
-            """
-This prototype helps tenants understand housing rights and prepare practical next steps.
-
-- **Chat Q&A:** Ask general tenancy questions or questions about an uploaded lease.
-- **Lease Audit:** Upload a lease and generate a risk-based review of key clauses.
-- **Communication Draft:** Generate a draft message to a landlord, agent, or housing provider.
-            """
+            "<div style='text-align: center; color: #9ca3af;'>This prototype helps tenants understand housing rights and prepare practical next steps.</div>",
+            unsafe_allow_html=True,
         )
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 60px;'></div>", unsafe_allow_html=True)
+
+    # Description block
+    desc_left, desc_centre, desc_right = st.columns([0.4, 3.2, 0.4])
+    with desc_centre:
+
+        # Feature cards (3 columns)
+        f1, f2, f3 = st.columns([1, 1, 1], gap="large")
+
+        with f1:
+            st.markdown("#### 💬 Chat Q&A")
+            st.write("Ask general tenancy questions or questions about an uploaded lease.")
+
+        with f2:
+            st.markdown("#### 📄 Lease Audit")
+            st.write("Upload a lease and generate a risk-based review of key clauses.")
+
+        with f3:
+            st.markdown("#### ✉️ Communication Draft")
+            st.write("Generate a draft message to a landlord, agent, or housing provider.")
+
+    st.markdown("<div style='height: 80px;'></div>", unsafe_allow_html=True)
 
     # Button block
     btn_left, btn_centre, btn_right = st.columns([2, 1, 2])
     with btn_centre:
-        if st.button("Start using the tool", type="primary", use_container_width=True):
+        if st.button("Get started", type="primary", use_container_width=True):
             st.session_state.show_app = True
             st.rerun()
 
     st.markdown(
         """
         <div class="app-footer-landing">
-            <div>General information only — not legal advice. Do not upload highly sensitive information. Uploaded lease data is processed temporarily during the active session and is not stored.</div>
+            <div>General information only — not legal advice. Built for NSW tenancy law.</div>
+            <div>Do not upload highly sensitive information. Uploaded lease data is processed temporarily during the active session and is not stored.</div>
             <div>Developed by Team 7 — Artificial Intelligence Principles and Applications (Autumn 2026) — UTS Master of Data Science and Innovation</div>
         </div>
         """,
@@ -102,7 +121,6 @@ This prototype helps tenants understand housing rights and prepare practical nex
     )
 
     st.stop()
-
 
 # ---------------- Main app ----------------
 render_sidebar()
@@ -131,7 +149,7 @@ with draft_tab:
 st.markdown(
     """
     <div class="app-footer-main">
-        <div>General information only — not legal advice.</div>
+        <div>General information only — not legal advice. Built for NSW tenancy law.</div>
         <div>Developed by Team 7 — Artificial Intelligence Principles and Applications (Autumn 2026) — UTS Master of Data Science and Innovation</div>
     </div>
     """,

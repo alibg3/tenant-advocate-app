@@ -110,14 +110,14 @@ def render_chat_tab() -> None:
                 #     st.json(debug_payload)
                 # ##DEBUG END
 
-                stream = stream_chat(
-                    question=question,
-                    #lease_text=(st.session_state.get("lease_text") or "")[:12000],
-                    lease_text=st.session_state.get("lease_text"),
-                    chat_history=format_chat_history(),
-                )
+                with st.spinner("Generating answer..."):
+                    stream = stream_chat(
+                        question=question,
+                        lease_text=st.session_state.get("lease_text"),
+                        chat_history=format_chat_history(),
+                    )
 
-                full_response = render_stream(stream, placeholder)
+                    full_response = render_stream(stream, placeholder) 
 
             except Exception as exc:
                 full_response = (

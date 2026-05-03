@@ -1,4 +1,6 @@
 import streamlit as st
+import streamlit.components.v1 as components
+import base64
 
 ##from backend_client.mock_backend import stream_draft #mock backend
 from backend_client.api_client import stream_draft
@@ -130,7 +132,7 @@ def render_draft_tab() -> None:
         st.markdown("### Draft Result")
         st.markdown(st.session_state.draft_result)
 
-        col1, col2, _ = st.columns([1, 1, 4])
+        col1, _ = st.columns([1, 5])
 
         with col1:
             st.download_button(
@@ -142,12 +144,3 @@ def render_draft_tab() -> None:
                 use_container_width=True,
             )
 
-        with col2:
-            st.download_button(
-                label="Download MD",
-                data=st.session_state.draft_result,
-                file_name="communication_draft.md",
-                mime="text/markdown",
-                key="download_draft_md_button",
-                use_container_width=True,
-            )
