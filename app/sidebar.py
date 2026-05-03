@@ -1,6 +1,11 @@
+import sys
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(ROOT_DIR))
+
 import streamlit as st
 from backend_client.api_client import check_backend_health
-
 from utils.pdf_utils import extract_pdf_text_from_bytes, validate_pdf_file
 
 
